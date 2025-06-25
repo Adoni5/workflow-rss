@@ -34,7 +34,8 @@ def create_feed(items):
         SubElement(entry, "description").text = f"{item['journal']} — {item['authors']}"
         SubElement(entry, "pubDate").text = datetime.strptime(item["date"], "%Y-%m-%dT%H:%M:%SZ").strftime("%a, %d %b %Y %H:%M:%S +0000")
         SubElement(entry, "category").text = item["workflow"]
-        SubElement(entry, "type").text = item["category"], 
+        SubElement(entry, "type").text = item["category"]
+        SubElement(entry, "guid", isPermaLink="true").text = item["link"]
 
     ElementTree(rss).write(OUTPUT_FILE, encoding="utf-8", xml_declaration=True)
 
