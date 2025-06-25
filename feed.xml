@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0">
+  <channel>
+    <title>My Curated Feed</title>
+    <link>https://yourgithubusername.github.io/yourrepo/</link>
+    <description>A curated list of content</description>
+    <item>
+      <title>Post Title</title>
+      <link>https://link-to-content.com</link>
+      <description>A short description of the item</description>
+      <pubDate>Wed, 25 Jun 2025 12:00:00 +0000</pubDate>
+      <category>Topic A</category>
+      <category>Topic B</category>
+    </item>
+    <!-- more items -->
+  </channel>
+</rss>
