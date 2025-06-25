@@ -42,7 +42,7 @@ def create_feed(items):
 def main():
     with open(DOIS_FILE, newline='') as csvfile:
         reader = csv.DictReader(csvfile)
-        items = [({"metadata": fetch_metadata(entry["doi"])} | entry) for entry in reader]
+        items = [({**fetch_metadata(entry["doi"])} | entry) for entry in reader]
     
     create_feed(items)
 
