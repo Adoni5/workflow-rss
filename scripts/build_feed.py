@@ -1,8 +1,10 @@
+import csv
+
 import requests
 from datetime import datetime
 from xml.etree.ElementTree import Element, SubElement, ElementTree
 
-DOIS_FILE = "data/dois.txt"
+DOIS_FILE = "data/dois.csv"
 OUTPUT_FILE = "feed.xml"
 
 def fetch_metadata(doi):
@@ -22,7 +24,7 @@ def create_feed(items):
     channel = SubElement(rss, "channel")
 
     SubElement(channel, "title").text = "Bioinformatics Tools & Papers"
-    SubElement(channel, "link").text = "https://yourusername.github.io/bioinfo-rss-feed/"
+    SubElement(channel, "link").text = "https://adoni5.github.io/workflow-rss/"
     SubElement(channel, "description").text = "Curated bioinformatics papers and tools"
 
     for item in items:
@@ -31,15 +33,16 @@ def create_feed(items):
         SubElement(entry, "link").text = item["link"]
         SubElement(entry, "description").text = f"{item['journal']} — {item['authors']}"
         SubElement(entry, "pubDate").text = datetime.strptime(item["date"], "%Y-%m-%dT%H:%M:%SZ").strftime("%a, %d %b %Y %H:%M:%S +0000")
-        SubElement(entry, "category").text = "bioinformatics"
+        SubElement(entry, "category").text = item["workflow"]
+        SubElement(entry, "type").text = item["category"], 
 
     ElementTree(rss).write(OUTPUT_FILE, encoding="utf-8", xml_declaration=True)
 
 def main():
-    with open(DOIS_FILE, "r") as f:
-        dois = [line.strip() for line in f if line.strip()]
+    with open(DOIS_FILE, newline='') as csvfile:
+        reader = csv.DictReader(csvfile)
+        items = [({"metadata": fetch_metadata(entry["doi"])} + entry) for entry in reader]
     
-    items = [fetch_metadata(doi) for doi in dois]
     create_feed(items)
 
 if __name__ == "__main__":
