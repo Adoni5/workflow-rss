@@ -11,12 +11,13 @@ def fetch_metadata(doi):
     r = requests.get(f"https://api.crossref.org/works/{doi}")
     r.raise_for_status()
     msg = r.json()["message"]
+    journal = msg.get("container-title", ["Unknown"])
     return {
         "title": msg["title"][0],
         "link": msg["URL"],
         "authors": ", ".join([a.get("family", "") for a in msg.get("author", [])]),
         "date": msg["created"]["date-time"],
-        "journal": msg.get("container-title", [""])[0],
+        "journal": journal[0] if journal else "Unknown",
     }
 
 def create_feed(items):
@@ -25,7 +26,8 @@ def create_feed(items):
 
     SubElement(channel, "title").text = "Bioinformatics Tools & Papers"
     SubElement(channel, "link").text = "https://adoni5.github.io/workflow-rss/"
-    SubElement(channel, "description").text = "Curated bioinformatics papers and tools"
+    SubElement
+    (channel, "description").text = "Curated bioinformatics papers and tools"
 
     for item in items:
         entry = SubElement(channel, "item")
