@@ -26,8 +26,7 @@ def create_feed(items):
 
     SubElement(channel, "title").text = "Bioinformatics Tools & Papers"
     SubElement(channel, "link").text = "https://adoni5.github.io/workflow-rss/"
-    SubElement
-    (channel, "description").text = "Curated bioinformatics papers and tools"
+    SubElement(channel, "description").text = "Curated bioinformatics papers and tools"
 
     for item in items:
         entry = SubElement(channel, "item")
