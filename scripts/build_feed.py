@@ -3,21 +3,33 @@ import csv
 import requests
 from datetime import datetime
 from xml.etree.ElementTree import Element, SubElement, ElementTree
+import xml.etree.ElementTree as ET
 
 DOIS_FILE = "data/dois.csv"
 OUTPUT_FILE = "feed.xml"
+
+def clean_abstract(abstract_xml):
+    try:
+        # Parse and strip XML tags from the abstract
+        root = ET.fromstring(abstract_xml)
+        return ''.join(root.itertext()).strip()
+    except ET.ParseError:
+        return abstract_xml.strip()  # fallback
 
 def fetch_metadata(doi):
     r = requests.get(f"https://api.crossref.org/works/{doi}")
     r.raise_for_status()
     msg = r.json()["message"]
-    journal = msg.get("container-title", ["Unknown"])
+    abstract = msg.get("abstract", None)
+    journal = msg.get("container-title", ["Unknown Journal"])
+    clean = clean_abstract(abstract) if abstract else None
     return {
         "title": msg["title"][0],
         "link": msg["URL"],
         "authors": ", ".join([a.get("family", "") for a in msg.get("author", [])]),
         "date": msg["created"]["date-time"],
-        "journal": journal[0] if journal else "Unknown",
+        "journal": journal[0] if journal else "Unknown Journal",
+        "abstract": clean
     }
 
 def create_feed(items):
@@ -37,6 +49,8 @@ def create_feed(items):
         SubElement(entry, "category").text = item["workflow"]
         SubElement(entry, "type").text = item["category"]
         SubElement(entry, "guid", isPermaLink="true").text = item["link"]
+        if item.get("abstract"):
+            SubElement(entry, "abstract").text = item["abstract"]
 
     ElementTree(rss).write(OUTPUT_FILE, encoding="utf-8", xml_declaration=True)
 
